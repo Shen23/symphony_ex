@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+use Avid\CandidateChallenge\Provider\RepositoryServiceProvider;
+use Avid\CandidateChallenge\Model\Locale;
+use Avid\CandidateChallenge\Application;
+
+include __DIR__ . '/../vendor/autoload.php';
+
+$env = Application::ENV_DEV;
+$app = new Application();
+include __DIR__ . '/../src/app.php';
+
+$faker = Faker\Factory::create(Locale::ENGLISH_CANADA);
+$faker->addProvider(new \Avid\CandidateChallenge\Faker\Provider\Member($faker));
+
+$application = new \Symfony\Component\Console\Application();
+$application->add(new \Avid\CandidateChallenge\Command\ServerRun());
+$application->add(new \Avid\CandidateChallenge\Command\DumpTableStructure($app->getDoctrine()));
+$application->add(
+    new \Avid\CandidateChallenge\Command\GenerateMembers($app[RepositoryServiceProvider::REPOSITORY_MEMBER], $faker)
+);
+$application->run();
