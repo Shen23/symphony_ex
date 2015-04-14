@@ -1,4 +1,3 @@
-# Avid Candidate Challenge
 
 ## Introduction
 
